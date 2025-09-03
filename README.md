@@ -38,7 +38,7 @@ O `.env.example` serve como base.
 Execute migrations, seeders e inicie o servidor:
 
 ```
-php artisan migrate:fresh --seed
+php artisan migrate --seed
 npm run dev
 php artisan serve
 ```
