@@ -15,10 +15,7 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/orders', function() {
-    return Inertia::render('Orders', [
-        "orders" => Order::all(),
-        "statuses" => array_column(OrderStatus::cases(), 'value'),
-    ]);
+    return Inertia::render('Orders');
 })->middleware([HandleRoles::class.':logistics_manager', 'auth']);
 
 require __DIR__.'/settings.php';
