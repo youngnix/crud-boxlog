@@ -4,15 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Enums\OrderStatus;
 
 class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $perPage = 10; // itens por página
+        $query = Order::query();
+
+        // Filtros opcionais
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+        if ($request->recipient) {
+            $query->where('recipient', 'like', "%{$request->recipient}%");
+        }
+
+        $orders = $query->orderBy('id', 'asc')->paginate($perPage);
+
+        return response()->json($orders);
     }
 
     /**
@@ -52,7 +67,18 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        //
+        if ($request->status == OrderStatus::Delivered->value
+            && strlen($order->address) == 0) {
+            abort(400, 'what');
+        }
+
+        $order->update($request->validate([
+            'recipient' => ['sometimes', 'string'],
+            'address' => ['sometimes', 'string'],
+            'status' => ['sometimes', Rule::in(array_column(OrderStatus::cases(), 'value')), 'string'],
+        ]));
+
+        return $order;
     }
 
     /**
