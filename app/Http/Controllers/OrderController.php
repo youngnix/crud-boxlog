@@ -67,9 +67,9 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        if ($request->status == OrderStatus::Delivered->value
+        if ($request->has('status') && $request->status == OrderStatus::Delivered->value
             && strlen($order->address) == 0) {
-            abort(400, 'what');
+            abort(422, 'Malformed request');
         }
 
         $order->update($request->validate([
