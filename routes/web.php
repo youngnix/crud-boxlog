@@ -6,6 +6,14 @@ use App\Models\Order;
 use App\Enums\OrderStatus;
 use App\Http\Middleware\HandleRoles;
 
+Route::get('/home', function () {
+    return Inertia::render('Welcome');
+})->name('home');
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::get('/', function() {
     return Inertia::render('Orders');
 })->middleware([HandleRoles::class.':logistics_manager', 'auth']);
